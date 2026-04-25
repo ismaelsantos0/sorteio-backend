@@ -106,12 +106,22 @@ async def webhook_mercado_pago(
 async def status_pagamento(sorteio_id: str):
     """
     O frontend consulta este endpoint em polling para saber se o Pix foi pago.
+    Se o status local ainda é 'pending', consulta o Mercado Pago diretamente.
     """
     sorteio = _sorteios_pendentes.get(sorteio_id)
     if not sorteio:
         raise HTTPException(status_code=404, detail="Sorteio não encontrado.")
 
-    return {"sorteio_id": sorteio_id, "status": sorteio["status"]}
+    # Se ainda está pendente, verifica direto no Mercado Pago
+    if sorteio["status"] == "pending" and sorteio.get("payment_id"):
+        try:
+            mp_status = buscar_status_pagamento(sorteio["payment_id"])
+            if mp_status in ("approved", "expired", "rejected", "cancelled"):
+                _sorteios_pendentes[sorteio_id]["status"] = mp_status
+        except Exception:
+            pass  # Se falhar a consulta, retorna o status local
+
+    return {"sorteio_id": sorteio_id, "status": _sorteios_pendentes[sorteio_id]["status"]}
 
 
 @router.post("/test/approve/{sorteio_id}")
