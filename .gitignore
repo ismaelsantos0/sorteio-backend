@@ -1,0 +1,36 @@
+# === SEGURANÇA: NUNCA enviar ao GitHub ===
+.env
+*.env
+
+# === Python ===
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+.Python
+*.egg-info/
+dist/
+build/
+
+# === Ambiente Virtual ===
+.venv/
+venv/
+env/
+
+# === Banco de Dados Local ===
+*.db
+*.sqlite3
+
+# === IDEs ===
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# === Logs ===
+*.log
+logs/
+
+# === Sistema Operacional ===
+.DS_Store
+Thumbs.db

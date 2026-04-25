@@ -1,0 +1,24 @@
+# === Framework Principal ===
+fastapi==0.115.0
+uvicorn[standard]==0.30.0
+
+# === Configuração e Segurança ===
+pydantic-settings==2.4.0
+python-dotenv==1.0.1
+PyJWT==2.9.0              # Substituído python-jose (incompatível com Python 3.13)
+bcrypt==4.2.0             # Hash de senhas (passlib tinha conflitos no 3.13)
+slowapi==0.1.9
+
+# === Banco de Dados ===
+sqlalchemy==2.0.35
+asyncpg==0.30.0           # 0.30+ tem suporte oficial ao Python 3.13
+alembic==1.13.3
+
+# === Requisições HTTP ===
+httpx==0.27.2
+
+# === Mercado Pago ===
+mercadopago==2.2.1
+
+# === Utilitários ===
+python-multipart==0.0.12
