@@ -5,6 +5,7 @@ from slowapi import Limiter
 from slowapi.util import get_remote_address
 from services.payment_service import gerar_pix, validar_webhook_assinatura, buscar_status_pagamento
 from services.apify_service import sondar_post
+from core.config import get_settings
 
 router = APIRouter(prefix="/api/payment", tags=["Pagamento"])
 limiter = Limiter(key_func=get_remote_address)
@@ -111,3 +112,21 @@ async def status_pagamento(sorteio_id: str):
         raise HTTPException(status_code=404, detail="Sorteio não encontrado.")
 
     return {"sorteio_id": sorteio_id, "status": sorteio["status"]}
+
+
+@router.post("/test/approve/{sorteio_id}")
+async def aprovar_pagamento_teste(sorteio_id: str):
+    """
+    ⚠️ APENAS EM SANDBOX — Simula a aprovação de um pagamento sem passar pelo MP.
+    Bloqueado automaticamente em produção (APP_ENV=production).
+    """
+    if get_settings().APP_ENV == "production":
+        raise HTTPException(status_code=403, detail="Endpoint disponível apenas em modo de teste.")
+
+    sorteio = _sorteios_pendentes.get(sorteio_id)
+    if not sorteio:
+        raise HTTPException(status_code=404, detail="Sorteio não encontrado.")
+
+    _sorteios_pendentes[sorteio_id]["status"] = "approved"
+    return {"sorteio_id": sorteio_id, "status": "approved", "msg": "Pagamento aprovado manualmente (sandbox)."}
+
