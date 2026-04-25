@@ -1,4 +1,5 @@
 from pydantic_settings import BaseSettings
+from pydantic import field_validator
 from functools import lru_cache
 from typing import Optional
 
@@ -51,9 +52,18 @@ class Settings(BaseSettings):
         env_file = ".env"
         env_file_encoding = "utf-8"
 
+    @field_validator("PRECO_TIER_1", "PRECO_TIER_2", "PRECO_TIER_3", "PRECO_TIER_4", mode="before")
+    @classmethod
+    def normalizar_preco(cls, v):
+        """Aceita vírgula como separador decimal (ex: 0,01 → 0.01) além do ponto padrão."""
+        if isinstance(v, str):
+            return v.replace(",", ".")
+        return v
+
     def get_allowed_origins(self) -> list[str]:
         """Converte a string de origens separadas por vírgula em lista."""
         return [origin.strip() for origin in self.ALLOWED_ORIGINS.split(",")]
+
 
 
 @lru_cache()
