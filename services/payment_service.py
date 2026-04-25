@@ -13,6 +13,13 @@ def gerar_pix(sorteio_id: str, descricao: str, valor: float, email_pagador: str)
     Gera um QR Code Pix dinâmico via Mercado Pago.
     Retorna o qr_code e qr_code_base64 (imagem) para exibir no frontend.
     """
+    webhook_url = settings.MP_WEBHOOK_URL
+    notification_url = (
+        f"{webhook_url}/api/payment/webhook"
+        if webhook_url and webhook_url.startswith("https://")
+        else None
+    )
+
     payment_data = {
         "transaction_amount": round(valor, 2),
         "description": descricao,
@@ -21,8 +28,10 @@ def gerar_pix(sorteio_id: str, descricao: str, valor: float, email_pagador: str)
             "email": email_pagador,
         },
         "external_reference": sorteio_id,  # ID para rastrear no webhook
-        "notification_url": f"{settings.MP_WEBHOOK_URL}/api/payment/webhook",
     }
+
+    if notification_url:
+        payment_data["notification_url"] = notification_url
 
     response = sdk.payment().create(payment_data)
     result = response["response"]
