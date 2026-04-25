@@ -34,6 +34,19 @@ class Settings(BaseSettings):
     META_APP_ID: Optional[str] = None
     META_APP_SECRET: Optional[str] = None
 
+    # --- Tabela de Preços (configurável via Railway sem mexer no código) ---
+    # Limites de comentários por faixa
+    PRECO_LIMITE_1: int = 300    # até X comentários → Tier 1
+    PRECO_LIMITE_2: int = 1000   # até X comentários → Tier 2
+    PRECO_LIMITE_3: int = 2000   # até X comentários → Tier 3
+    PRECO_LIMITE_4: int = 5000   # até X comentários → Tier 4 (acima = Plano PRO)
+
+    # Preços por faixa em R$
+    PRECO_TIER_1: float = 9.90   # mínimo (posts pequenos)
+    PRECO_TIER_2: float = 19.90
+    PRECO_TIER_3: float = 39.90
+    PRECO_TIER_4: float = 89.90
+
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"

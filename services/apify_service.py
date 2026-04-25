@@ -13,20 +13,21 @@ COTACAO_DOLAR = 5.10  # Atualizar periodicamente
 
 def calcular_preco(contagem: int) -> float:
     """
-    Calcula o preço a cobrar com base na tabela de faixas.
+    Calcula o preço com base na tabela de faixas definida nas variáveis de ambiente.
     Não existe tier gratuito — todo sorteio é pago.
-    Retorna o valor em R$ ou -1 se ultrapassar o limite (>5000).
+    Retorna o valor em R$ ou -1 se ultrapassar o limite máximo (Plano PRO).
     """
-    if contagem <= 300:
-        return 9.90     # Mínimo — posts pequenos
-    elif contagem <= 1000:
-        return 19.90
-    elif contagem <= 2000:
-        return 39.90
-    elif contagem <= 5000:
-        return 89.90
+    s = settings
+    if contagem <= s.PRECO_LIMITE_1:
+        return s.PRECO_TIER_1
+    elif contagem <= s.PRECO_LIMITE_2:
+        return s.PRECO_TIER_2
+    elif contagem <= s.PRECO_LIMITE_3:
+        return s.PRECO_TIER_3
+    elif contagem <= s.PRECO_LIMITE_4:
+        return s.PRECO_TIER_4
     else:
-        return -1       # Sinaliza: redirecionar para Plano PRO
+        return -1  # Sinaliza: redirecionar para Plano PRO
 
 
 async def sondar_post(url_post: str) -> dict:
